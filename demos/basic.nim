@@ -11,34 +11,7 @@ loadExtensions()
 
 let bxy = newBoxy()
 
-# Load the images.
-# bxy.addImage("bg", readImage("examples/data/bg.png"))
-# bxy.addImage("ring1", readImage("examples/data/ring1.png"))
-# bxy.addImage("ring2", readImage("examples/data/ring2.png"))
-# bxy.addImage("ring3", readImage("examples/data/ring3.png"))
-
 var frame: int
-
-# Date	Open	High	Low	Close	Adj Close	Volume
-# let ctx = newContext(image)
-# ctx.fillStyle = rgba(255, 0, 0, 255)
-
-# let
-#   pos = vec2(50, 50)
-#   wh = vec2(100, 100)
-
-# ctx.fillRect(rect(pos, wh))
-
-
-# let ctx = newContext(image)
-# ctx.strokeStyle = "#FF5C00"
-# ctx.lineWidth = 10
-
-# let
-#   start = vec2(25, 25)
-#   stop = vec2(175, 175)
-
-# ctx.strokeSegment(segment(start, stop))
 
 proc getData(): auto =
   let dfRawText = DF.fromFile(currentSourcePath.parentDir / "AAPL.csv")

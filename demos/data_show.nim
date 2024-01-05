@@ -17,10 +17,6 @@ let df = dfRawText.map(schemaParser(schema, ','))
                   .cache()
 let min = df.map(record => record.Close).min()
 let max = df.map(record => record.Close).max()
-echo (max - min) / 800
-echo df.count()
-# echo df.filter(record => record.Close > record.Open)
-#       .collect()
 echo "Min : ", min
 echo "Max : ", max
 echo "Locator: ", (max - min) / 6
