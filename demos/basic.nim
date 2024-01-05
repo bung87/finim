@@ -54,17 +54,17 @@ proc display() =
   let barWidth = floor((windowSize[0] - gapWidth * (count - 1) ) / count).int
   let offsetHigh = h - max
   let offsetLow = l - min
-  let ratio = windowSize[1].float / (max - min)
+  let ratio = windowSize[1].float / (h - l)
   for i, record in dataset:
     let offsetX = i * (barWidth + gapWidth)
     let stickX = offsetX + barWidth div 2
     if record.Close > record.Open:
       let path = fmt"""
-          M {offsetX} {(record.Close - min) * ratio}
+          M {offsetX} {(record.Close - l) * ratio}
           H {offsetX + barWidth}
-          V {(record.Open - min) * ratio}
+          V {(record.Open - l) * ratio}
           H {offsetX}
-          V {(record.Close - min) * ratio}
+          V {(record.Close - l) * ratio}
           Z
         """
 
@@ -73,17 +73,17 @@ proc display() =
         rgba(255, 0, 0, 255)
       )
       let
-        start = vec2(stickX.float, (record.High - min) * ratio)
-        stop = vec2(stickX.float, (record.Low - min) * ratio)
+        start = vec2(stickX.float, (record.High - l) * ratio)
+        stop = vec2(stickX.float, (record.Low - l) * ratio)
 
       ctx.strokeSegment(segment(start, stop))
     elif record.Close < record.Open:
       let path = fmt"""
-          M {offsetX} {(record.Open - min) * ratio}
+          M {offsetX} {(record.Open - l) * ratio}
           H {offsetX + barWidth}
-          V {(record.Close - min) * ratio}
+          V {(record.Close - l) * ratio}
           H {offsetX}
-          V {(record.Open - min) * ratio}
+          V {(record.Open - l) * ratio}
           Z
         """
 
@@ -92,17 +92,17 @@ proc display() =
         rgba(0, 255, 0, 255)
       )
       let
-        start = vec2(stickX.float, (record.High - min) * ratio)
-        stop = vec2(stickX.float, (record.Low - min) * ratio)
+        start = vec2(stickX.float, (record.High - l) * ratio)
+        stop = vec2(stickX.float, (record.Low - l) * ratio)
 
       ctx2.strokeSegment(segment(start, stop))
     elif record.Close == record.Open:
       let path = fmt"""
-          M {offsetX} {(record.Open - min) * ratio}
+          M {offsetX} {(record.Open - l) * ratio}
           H {offsetX + barWidth}
-          V {(record.Close - min) * ratio}
+          V {(record.Close - l) * ratio}
           H {offsetX}
-          V {(record.Open - min) * ratio}
+          V {(record.Open - l) * ratio}
           Z
         """
 
