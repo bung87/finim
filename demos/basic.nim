@@ -39,11 +39,11 @@ proc display() =
   let kHeight = windowSize[1] - volumeHeight
   let image = newImage(windowSize[0], kHeight)
   let ctx = newContext(image)
-  ctx.strokeStyle = "#FF0000"
+  ctx.strokeStyle = "#dc5034"
   ctx.lineWidth = 1
 
   let ctx2 = newContext(image)
-  ctx2.strokeStyle = "#00FF00"
+  ctx2.strokeStyle = "#508b37"
   ctx2.lineWidth = 1
   let df = getData()
   let min = df.map(record => record.Close).min()
@@ -70,16 +70,17 @@ proc display() =
           V {(record.Close - l) * ratio}
           Z
         """
-
-      image.fillPath(
-        path,
-        rgba(255, 0, 0, 255)
-      )
       let
         start = vec2(stickX.float, (record.High - l) * ratio)
         stop = vec2(stickX.float, (record.Low - l) * ratio)
 
       ctx.strokeSegment(segment(start, stop))
+
+      image.fillPath(
+        path,
+        rgba(220, 85, 62, 255)
+      )
+      
     elif record.Close < record.Open:
       let path = fmt"""
           M {offsetX} {(record.Open - l) * ratio}
@@ -89,16 +90,17 @@ proc display() =
           V {(record.Open - l) * ratio}
           Z
         """
-
-      image.fillPath(
-        path,
-        rgba(0, 255, 0, 255)
-      )
       let
         start = vec2(stickX.float, (record.High - l) * ratio)
         stop = vec2(stickX.float, (record.Low - l) * ratio)
 
       ctx2.strokeSegment(segment(start, stop))
+
+      image.fillPath(
+        path,
+        rgba(92, 149, 67, 255)
+      )
+      
     elif record.Close == record.Open:
       let path = fmt"""
           M {offsetX} {(record.Open - l) * ratio}
@@ -134,7 +136,7 @@ proc display() =
         """
       image2.fillPath(
         path,
-        rgba(255, 0, 0, 255)
+        rgba(220, 79, 52, 255)
       )
     elif record.Close < record.Open:
       let path = fmt"""
@@ -148,7 +150,7 @@ proc display() =
 
       image2.fillPath(
         path,
-        rgba(0, 255, 0, 255)
+        rgba(80, 138, 55, 255)
       )
 
   bxy.addImage("v", image2)
