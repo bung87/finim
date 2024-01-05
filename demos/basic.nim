@@ -63,19 +63,28 @@ proc display() =
 
   # bxy.saveTransform()
   let image = newImage(windowSize[0], windowSize[1])
+  let ctx = newContext(image)
+  ctx.strokeStyle = "#FF0000"
+  ctx.lineWidth = 1
+
+  let ctx2 = newContext(image)
+  ctx2.strokeStyle = "#00FF00"
+  ctx2.lineWidth = 1
   let df = getData()
   let min = df.map(record => record.Close).min()
   let max = df.map(record => record.Close).max()
-  # let perH = windowSize[1] / (max - min)
+  let h = df.map(record => record.High).max()
+  let l = df.map(record => record.Low).min()
   let count = df.count()
   let dataset = df.collect()
-  let gapWidth = 2
-  let barWidth = round((windowSize[0] - gapWidth * (count - 1) ) / count).int
-  echo barWidth
+  let gapWidth = 5
+  let barWidth = floor((windowSize[0] - gapWidth * (count - 1) ) / count).int
+  let offsetHigh = h - max
+  let offsetLow = l - min
   let ratio = windowSize[1].float / (max - min)
   for i, record in dataset:
-    let isGrow = record.Close > record.Open
-    let offsetX = i * barWidth + gapWidth
+    let offsetX = i * (barWidth + gapWidth)
+    let stickX = offsetX + barWidth div 2
     if record.Close > record.Open:
       let path = fmt"""
           M {offsetX} {(record.Close - min) * ratio}
@@ -90,6 +99,11 @@ proc display() =
         path,
         rgba(255, 0, 0, 255)
       )
+      let
+        start = vec2(stickX.float, (record.High - min) * ratio)
+        stop = vec2(stickX.float, (record.Low - min) * ratio)
+
+      ctx.strokeSegment(segment(start, stop))
     elif record.Close < record.Open:
       let path = fmt"""
           M {offsetX} {(record.Open - min) * ratio}
@@ -104,6 +118,11 @@ proc display() =
         path,
         rgba(0, 255, 0, 255)
       )
+      let
+        start = vec2(stickX.float, (record.High - min) * ratio)
+        stop = vec2(stickX.float, (record.Low - min) * ratio)
+
+      ctx2.strokeSegment(segment(start, stop))
     elif record.Close == record.Open:
       let path = fmt"""
           M {offsetX} {(record.Open - min) * ratio}
