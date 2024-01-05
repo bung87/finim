@@ -25,17 +25,19 @@ proc getData(): auto =
     floatCol("Volume"),
   ]
   result = dfRawText.map(schemaParser(schema, ','))
-                    .map(record => record.projectAway(date, Volume))
+                    # .map(record => record.projectAway(date, Volume))
                     .cache()
 # Called when it is time to draw a new frame.
 proc display() =
   # Clear the screen and begin a new frame.
   bxy.beginFrame(windowSize)
-#   bxy.drawRect(rect(vec2(0, 0), window.size.vec2), color(255, 255, 255, 1))
   bxy.drawRect(rect(vec2(0, 0), window.size.vec2), color(1, 1, 1, 1))
 
   # bxy.saveTransform()
-  let image = newImage(windowSize[0], windowSize[1])
+  let volumeHeight = 100
+  let volumeWidth = windowSize[1]
+  let kHeight = windowSize[1] - volumeHeight
+  let image = newImage(windowSize[0], kHeight)
   let ctx = newContext(image)
   ctx.strokeStyle = "#FF0000"
   ctx.lineWidth = 1
@@ -54,7 +56,8 @@ proc display() =
   let barWidth = floor((windowSize[0] - gapWidth * (count - 1) ) / count).int
   let offsetHigh = h - max
   let offsetLow = l - min
-  let ratio = windowSize[1].float / (h - l)
+  
+  let ratio = kHeight.float / (h - l)
   for i, record in dataset:
     let offsetX = i * (barWidth + gapWidth)
     let stickX = offsetX + barWidth div 2
@@ -111,7 +114,45 @@ proc display() =
         rgba(126, 126, 126, 255)
       )
   bxy.addImage("k", image)
-  bxy.drawImage("k", rect = rect(vec2(0, 0), window.size.vec2))
+  bxy.drawImage("k", rect = rect(vec2(0, 0), vec2(window.size.vec2[0].float32, kHeight.float32)))
+
+  let image2 = newImage(volumeWidth, volumeHeight)
+  let vMin = df.map(record => record.Volume).min()
+  let vMax = df.map(record => record.Volume).max()
+  let ratio2 = volumeHeight.float / vMax
+  for i, record in dataset:
+    let offsetX = i * (barWidth)
+    let stickX = offsetX + barWidth div 2
+    if record.Close > record.Open:
+      let path = fmt"""
+          M {offsetX} {volumeHeight}
+          V {volumeHeight.float - record.Volume * ratio2}
+          H {offsetX + barWidth}
+          V {volumeHeight}
+          H {offsetX}
+          Z
+        """
+      image2.fillPath(
+        path,
+        rgba(255, 0, 0, 255)
+      )
+    elif record.Close < record.Open:
+      let path = fmt"""
+          M {offsetX} {volumeHeight}
+          V {volumeHeight.float - record.Volume * ratio2}
+          H {offsetX + barWidth}
+          V {volumeHeight}
+          H {offsetX}
+          Z
+        """
+
+      image2.fillPath(
+        path,
+        rgba(0, 255, 0, 255)
+      )
+
+  bxy.addImage("v", image2)
+  bxy.drawImage("v", rect = rect(vec2(0.float32, kHeight.float32),vec2(window.size.vec2[0].float32, volumeHeight.float32)))
   # bxy.restoreTransform()
   # End this frame, flushing the draw commands.
   bxy.endFrame()
