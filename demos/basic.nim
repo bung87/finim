@@ -63,16 +63,16 @@ proc display() =
     let stickX = offsetX + barWidth div 2
     if record.Close > record.Open:
       let path = fmt"""
-          M {offsetX} {(record.Close - l) * ratio}
+          M {offsetX} {kHeight.float - (record.Close - l) * ratio}
           H {offsetX + barWidth}
-          V {(record.Open - l) * ratio}
+          V {kHeight.float - (record.Open - l) * ratio}
           H {offsetX}
-          V {(record.Close - l) * ratio}
+          V {kHeight.float - (record.Close - l) * ratio}
           Z
         """
       let
-        start = vec2(stickX.float, (record.High - l) * ratio)
-        stop = vec2(stickX.float, (record.Low - l) * ratio)
+        start = vec2(stickX.float, kHeight.float - (record.High - l) * ratio)
+        stop = vec2(stickX.float, kHeight.float - (record.Low - l) * ratio)
 
       ctx.strokeSegment(segment(start, stop))
 
@@ -83,16 +83,16 @@ proc display() =
       
     elif record.Close < record.Open:
       let path = fmt"""
-          M {offsetX} {(record.Open - l) * ratio}
+          M {offsetX} {kHeight.float - (record.Open - l) * ratio}
           H {offsetX + barWidth}
-          V {(record.Close - l) * ratio}
+          V {kHeight.float - (record.Close - l) * ratio}
           H {offsetX}
-          V {(record.Open - l) * ratio}
+          V {kHeight.float - (record.Open - l) * ratio}
           Z
         """
       let
-        start = vec2(stickX.float, (record.High - l) * ratio)
-        stop = vec2(stickX.float, (record.Low - l) * ratio)
+        start = vec2(stickX.float, kHeight.float - (record.High - l) * ratio)
+        stop = vec2(stickX.float, kHeight.float - (record.Low - l) * ratio)
 
       ctx2.strokeSegment(segment(start, stop))
 
@@ -103,11 +103,11 @@ proc display() =
       
     elif record.Close == record.Open:
       let path = fmt"""
-          M {offsetX} {(record.Open - l) * ratio}
+          M {offsetX} {kHeight.float - (record.Open - l) * ratio}
           H {offsetX + barWidth}
-          V {(record.Close - l) * ratio}
+          V {kHeight.float - (record.Close - l) * ratio}
           H {offsetX}
-          V {(record.Open - l) * ratio}
+          V {kHeight.float - (record.Open - l) * ratio}
           Z
         """
 
